@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Open the aliased flake.nix
+# echo "Opening the flake.nix for editing..."
+nvim "/Users/anyaforger/.config/nix-darwin/flake.nix"
+
+# Prompt the user to confirm if they want to build the flake
+read -p "Do you want to build the flake? (y/n): " response
+
+# Build the flake if the user confirms
+if [[ "$response" =~ ^[Yy]$ ]]; then
+    darwin-rebuild switch --flake ~/.config/nix-darwin#anyaforger
+else
+    echo "Not building"
+fi

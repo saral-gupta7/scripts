@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Set the path to your Karabiner directory
+KARABINER_DIR="$HOME/dotfiles/.config/karabiner/"
+
+# Navigate to the Karabiner directory
+if cd "$KARABINER_DIR"; then
+    echo "Navigated to $KARABINER_DIR."
+else
+    echo "Failed to navigate to $KARABINER_DIR. Directory does not exist."
+    exit 1
+fi
+
+# Check if rules.ts exists
+if [ ! -f "rules.ts" ]; then
+    echo "rules.ts not found in $KARABINER_DIR."
+    exit 1
+fi
+
+# Open rules.ts in Neovim
+nvim "rules.ts"
+
+# Run yarn build after exiting Neovim
+if [ -f "package.json" ]; then
+    echo "Running yarn run build..."
+    yarn run build
+    echo "Build completed."
+else
+    echo "package.json not found in $KARABINER_DIR. Cannot run yarn build."
+    exit 1
+fi

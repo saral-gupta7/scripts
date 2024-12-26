@@ -11,5 +11,5 @@ read -p "Do you want to build the flake? (y/n): " response
 if [[ "$response" =~ ^[Yy]$ ]]; then
     darwin-rebuild switch --flake ~/.config/nix-darwin#anyaforger
 else
-    echo "Not building"
+    echo "Not Building"
 fi

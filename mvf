@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Set the source directory (Downloads)
+DOWNLOADS_DIR="$HOME/Downloads"
+
+# Use fzf to select a file
+SELECTED_FILE=$(find "$DOWNLOADS_DIR" -maxdepth 1 -type f | fzf)
+
+# Check if a file was selected
+if [[ -n "$SELECTED_FILE" ]]; then
+  cp "$SELECTED_FILE" ./
+  echo "Copied: $SELECTED_FILE to $(pwd)"
+else
+  echo "No file selected."
+fi

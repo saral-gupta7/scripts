@@ -9,7 +9,7 @@ read -p "Do you want to build the flake? (y/n): " response
 
 # Build the flake if the user confirms
 if [[ "$response" =~ ^[Yy]$ ]]; then
-    darwin-rebuild switch --flake ~/.config/nix-darwin#anyaforger
+  darwin-rebuild switch --flake ~/.config/nix-darwin#anyaforger
 else
-    echo "Not Building"
+  echo "Not Building"
 fi

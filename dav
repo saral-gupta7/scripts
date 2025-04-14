@@ -7,7 +7,7 @@ RESET="\033[0m"
 
 echo -e "${RED}Welcome to YT Extracter CLI!${RESET}"
 
-choice=$(printf "Download Audio\nDownload Video\nnone" | fzf --prompt="Choose an option: ")
+choice=$(printf "Download Audio\nDownload Video\nnone" | fzf --prompt="Choose an option: " --layout=reverse)
 
 if [[ "$choice" == "Download Audio" ]]; then
   read -p "Enter the name of the audio file: " response
@@ -19,7 +19,7 @@ elif [[ "$choice" == "Download Video" ]]; then
   read -p "Enter the name of the video file: " response
   read -p "Enter video URL: " video
   echo -e "${YELLOW}Downloading video...${RESET}"
-  yt-dlp --force-overwrites -o "${response}.mp4" "$video"
+  yt-dlp --force-overwrites -o "${response}" "$video"
 
 else
   echo -e "${RED}Invalid operation!${RESET}"

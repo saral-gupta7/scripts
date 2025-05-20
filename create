@@ -19,6 +19,7 @@ if [[ -n "$name" ]]; then
   echo "#!/bin/bash" >"$TARGET_DIR/$name"
   # providing executable permissions to that script
   chmod +x "$TARGET_DIR/$name"
+  nvim "$TARGET_DIR/$name"
 
 else
   echo -e "${RED}Please provide the file name!${RESET}"

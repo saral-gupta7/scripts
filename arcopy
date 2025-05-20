@@ -1,0 +1,4 @@
+#!/bin/bash
+
+qrencode -t PNG -s 15 -o ~/recreation/garbage/tmp.png $(pbpaste)
+kitty +kitten icat ~/recreation/garbage/tmp.png

@@ -1,0 +1,26 @@
+#!/bin/bash
+
+# We are going to create a script that will create a type script project
+figlet -f small "TS with Prisma" | lolcat
+
+read -p "Enter the name of the project: " name
+
+if [[ -n "$name" ]]; then
+  mkdir "$name" && cd "$name"
+  mkdir src && touch src/index.ts
+
+  echo -e 'import { PrismaClient } from "@prisma/client";\n\nconst client = new PrismaClient();' >src/index.ts
+  # Initalize an empty node project
+  npm init -y
+  # Installing all the rqequired dependencies
+  npm install typescript pg @types/pg prisma
+
+  # Setting up typescript and prisma
+  npx tsc --init
+  npx prisma init
+  npx prisma generate
+
+  # remove the unnecessary output field
+  sed -i '' '/output *=/d' prisma/schema.prisma
+  jq '.scripts.dev = "tsc -b && node ./dist/index.js"' package.json >tmp.$$.json && mv tmp.$$.json package.json
+fi

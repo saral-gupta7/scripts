@@ -9,7 +9,7 @@ PURPLE="\e[35m"
 echo -e "${GREEN}Welcome to FFMPEG CLI Tool.${RESET}" >&2
 echo "" >&2
 
-operation=$(printf "2. Format Conversion\n2. Convert to BNW\n3. Extract Audio\n4. Clip Media" | fzf --prompt="Choose the operation to peform" --layout=reverse --header="Choose what you want to do:")
+operation=$(printf "1. Format Conversion\n2. Convert to BNW\n3. Extract Audio\n4. Clip Media\n5. Extract frames" | fzf --prompt="Choose the operation to peform" --layout=reverse --header="Choose what you want to do:")
 
 if [[ -n "$operation" ]]; then
 
@@ -23,15 +23,16 @@ else
 fi
 
 case "$operation" in
-"2. Convert to BNW")
+"1. Convert to BNW")
   ffmpeg -i $media_file -vf format=gray -c:v libx264 -preset ultrafast -crf 28 -c:a copy bnw_$media_file.mp4
   ;;
 "3. Extract Audio")
   ffmpeg -i "$media_file" -q:a 0 -map a "${media_file%.*}.mp3"
   ;;
-"Extract Frames")
+"5. Extract Frames")
   mkdir -p frames
   ffmpeg -i "$media_file" -vf "fps=1" frames/frame_%04d.png
+  echo -e "${GREEN}Frames extracted to ./frames directory${RESET}"
   ;;
 "4. Clip Media")
   read -p "Start time (e.g., 00:00:15): " start

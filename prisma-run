@@ -13,14 +13,15 @@ if [[ -n "$name" ]]; then
   # Initalize an empty node project
   npm init -y
   # Installing all the rqequired dependencies
-  npm install typescript pg @types/pg prisma
+  npm install typescript pg @types/pg prisma express @types/express
 
   # Setting up typescript and prisma
   npx tsc --init
   npx prisma init
+
+  sed -i '' '/output *=/d' prisma/schema.prisma
   npx prisma generate
 
   # remove the unnecessary output field
-  sed -i '' '/output *=/d' prisma/schema.prisma
   jq '.scripts.dev = "tsc -b && node ./dist/index.js"' package.json >tmp.$$.json && mv tmp.$$.json package.json
 fi

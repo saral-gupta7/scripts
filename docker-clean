@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+
+set -e
+
+selected=$(docker ps -a --format "{{.ID}}\t{{.Names}}\t{{.Status}}" |
+  fzf -m --delimiter='\t' --with-nth=2,3)
+
+[ -z "$selected" ] && echo "No containers selected." && exit 0
+
+ids=$(echo "$selected" | cut -f1)
+
+running_ids=$(echo "$ids" | xargs -r docker inspect \
+  --format '{{if .State.Running}}{{.Id}}{{end}}')
+
+if [ -n "$running_ids" ]; then
+  docker stop $running_ids
+fi
+
+docker rm $ids

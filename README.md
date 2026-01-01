@@ -41,6 +41,16 @@ Then reload your shell:
 source ~/.zshrc  # or ~/.bashrc
 ```
 
+## Scripts Overview
+
+- **cpr** - Select and compile C++ files from the current directory
+- **create** - Interactive script creator for generating new scripts in ~/scripts
+- **dav** - YouTube downloader CLI for audio and video extraction
+- **docker-clean** - Clean up Docker containers interactively with fzf
+- **ffm** - FFMPEG CLI tool for video operations (convert, clip, extract audio/frames)
+- **mvf** - Move multiple files from Downloads directory to current location with rsync
+- **slt** - Select and edit scripts from ~/scripts directory in nvim
+
 ## Usage Tips
 
 - Read through each script before running it

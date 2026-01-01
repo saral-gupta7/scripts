@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+
+DOWNLOADS_DIR="$HOME/Downloads"
+
+SELECTED_FILES=$(find "$DOWNLOADS_DIR" \( -type f -o -type d \) | fzf -m)
+
+if [[ -n "$SELECTED_FILES" ]]; then
+  while IFS= read -r file; do
+    rsync -avh --progress "$file" ./
+  done <<< "$SELECTED_FILES"
+  
+  read -p "Would you like to delete the original file(s)? (y/N): " res
+  if [[ "$res" =~ ^[Yy]$ ]]; then
+    while IFS= read -r file; do
+      rm -r "$file"
+    done <<< "$SELECTED_FILES"
+    echo "Original file(s) deleted!"
+  fi
+
+  echo "Copied file(s) to $(pwd)"
+else
+  echo "No file selected."
+fi

@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+YELLOW="\033[1;33m"
+RESET="\033[0m"
+
+TARGET_DIR="$HOME/scripts/"
+
+echo -e "Welcome to script creator!" | lolcat
+
+read -p "Enter the name of your script: " name
+
+if [[ -n "$name" ]]; then
+
+  echo -e "${GREEN}Creating the script... $name ${RESET}"
+  # creating the script
+  touch "$TARGET_DIR/$name"
+  echo "#!/bin/bash" >"$TARGET_DIR/$name"
+  # providing executable permissions to that script
+  chmod +x "$TARGET_DIR/$name"
+  nvim "$TARGET_DIR/$name"
+
+else
+  echo -e "${RED}Please provide the file name!${RESET}"
+  exit 1
+fi

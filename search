@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+TARGET_DIR="$HOME/scripts/"
+
+SELECTED_FILE=$(find $TARGET_DIR -type f -maxdepth 1 | fzf --preview 'bat --color=always --style=numbers {} || cat {}')
+
+if [[ -n $SELECTED_FILE ]]; then
+  nvim "$SELECTED_FILE"
+else
+  echo "File not found!"
+fi

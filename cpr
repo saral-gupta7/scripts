@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+SELECTED_FILE=$(find . -type f -name "*.cpp" -maxdepth 1 | fzf)
+
+if [[ -n "$SELECTED_FILE" ]]; then
+  if [[ -d "./output" ]]; then
+    g++ $SELECTED_FILE -o ./output/out
+    ./output/out
+  else
+    mkdir output
+    g++ $SELECTED_FILE -o ./output/out
+    ./output/out
+  fi
+
+else
+  echo "File not found"
+fi

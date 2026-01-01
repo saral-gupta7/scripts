@@ -1,0 +1,88 @@
+#!/usr/bin/env bash
+
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+RESET="\033[0m"
+
+echo -e "${GREEN}Welcome to FFMPEG CLI Tool.${RESET}" >&2
+echo "" >&2
+
+operation=$(printf "1. Format Conversion\n2. Convert to BNW\n3. Extract Audio\n4. Clip Media\n5. Extract Frames (1 FPS)\n6. Extract All Frames" | fzf --prompt="Choose the operation to perform" --layout=reverse --header="Choose what you want to do:")
+
+if [[ -z "$operation" ]]; then
+  echo -e "${RED}No option selected. Aborting...!${RESET}"
+  exit 1
+fi
+
+echo -e "${GREEN}Select a media file from the current directory:${RESET}"
+media_file=$(find . -maxdepth 1 -type f \( -iname "*.mp4" -o -iname "*.mkv" -o -iname "*.avi" -o -iname "*.webm" -o -iname "*.mov" \) | sed 's|^\./||' |
+  fzf --prompt="File: " --header="Pick a video file to process:")
+
+if [[ -z "$media_file" ]]; then
+  echo -e "${RED}No file selected. Aborting...!${RESET}"
+  exit 1
+fi
+
+case "$operation" in
+"1. Format Conversion")
+  format=$(printf "mp4\nmkv\navi\nwebm\nmov" | fzf --prompt="Output format: " --header="Select output format:")
+  if [[ -n "$format" ]]; then
+    output="${media_file%.*}.$format"
+    ffmpeg -i "$media_file" -c:v libx264 -c:a aac "$output"
+    echo -e "${GREEN}Converted to $output${RESET}"
+  fi
+  ;;
+"2. Convert to BNW")
+  output="bnw_${media_file%.*}.mp4"
+  ffmpeg -i "$media_file" -vf format=gray -c:v libx264 -preset ultrafast -crf 28 -c:a copy "$output"
+  echo -e "${GREEN}Black & white video saved as $output${RESET}"
+  ;;
+"3. Extract Audio")
+  output="${media_file%.*}.mp3"
+  ffmpeg -i "$media_file" -q:a 0 -map a "$output"
+  echo -e "${GREEN}Audio extracted to $output${RESET}"
+  ;;
+"4. Clip Media")
+  read -p "Start time (e.g., 00:00:15): " start
+  read -p "End time (e.g., 00:00:32): " end
+  read -p "Enter name of output file: " output
+  ffmpeg -hide_banner -loglevel error -y -ss "$start" -to "$end" -i "$media_file" -c:v libx264 -c:a aac "${output}.mp4"
+  echo -e "${GREEN}Clipped video saved as ${output}.mp4${RESET}"
+  ;;
+"5. Extract Frames (1 FPS)")
+  folder="frames"
+  if [[ -d "$folder" ]]; then
+    echo -e "${RED}A folder named 'frames' already exists.${RESET}"
+    read -p "Do you want to create a new folder? (y/n): " choice
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+      timestamp=$(date +%Y%m%d_%H%M%S)
+      folder="frames_$timestamp"
+      echo -e "${GREEN}Creating new folder: $folder${RESET}"
+    else
+      echo -e "${RED}Aborting to prevent overwriting existing frames.${RESET}"
+      exit 1
+    fi
+  fi
+  mkdir -p "$folder"
+  ffmpeg -i "$media_file" -vsync 0 -q:v 1 -vf "fps=1" "$folder/frame_%04d.png"
+  echo -e "${GREEN}Frames extracted to $folder/${RESET}"
+  ;;
+"6. Extract All Frames")
+  folder="frames"
+  if [[ -d "$folder" ]]; then
+    echo -e "${RED}A folder named 'frames' already exists.${RESET}"
+    read -p "Do you want to create a new folder? (y/n): " choice
+    if [[ "$choice" =~ ^[Yy]$ ]]; then
+      timestamp=$(date +%Y%m%d_%H%M%S)
+      folder="frames_$timestamp"
+      echo -e "${GREEN}Creating new folder: $folder${RESET}"
+    else
+      echo -e "${RED}Aborting to prevent overwriting existing frames.${RESET}"
+      exit 1
+    fi
+  fi
+  mkdir -p "$folder"
+  ffmpeg -i "$media_file" -vsync 0 -q:v 1 "$folder/frame_%06d.png"
+  echo -e "${GREEN}All frames extracted to $folder/${RESET}"
+  ;;
+esac

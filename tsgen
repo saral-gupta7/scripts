@@ -1,0 +1,71 @@
+#!/usr/bin/env bash
+set -e
+
+DEFAULT_NAME="typescript-from-scratch"
+
+# Ask for project name if not provided
+if [ -z "$1" ]; then
+  read -p "📛 Enter project name [$DEFAULT_NAME]: " PROJECT_NAME
+  PROJECT_NAME=${PROJECT_NAME:-$DEFAULT_NAME}
+else
+  PROJECT_NAME="$1"
+fi
+
+echo "📁 Creating project: $PROJECT_NAME"
+mkdir -p "$PROJECT_NAME"
+cd "$PROJECT_NAME"
+
+echo "📦 Initializing npm project..."
+npm init -y
+
+echo "📥 Installing TypeScript..."
+npm install -D typescript
+
+echo "⚙️ Writing tsconfig.json..."
+cat <<EOF >tsconfig.json
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "es2022",
+    "moduleResolution": "bundler",
+    "strict": true,
+
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true,
+    "useUnknownInCatchVariables": true,
+    "skipLibCheck": true,
+
+    "rootDir": "src",
+    "outDir": "dist"
+  },
+  "include": ["src"]
+}
+EOF
+
+echo "📜 Updating package.json scripts and module type..."
+node <<'EOF'
+const fs = require('fs')
+
+const pkg = JSON.parse(fs.readFileSync('package.json', 'utf8'))
+
+pkg.type = 'module'
+pkg.scripts = {
+  build: 'tsc -p tsconfig.json',
+  dev: 'tsc -w -p tsconfig.json'
+}
+
+fs.writeFileSync('package.json', JSON.stringify(pkg, null, 2))
+EOF
+
+echo "📂 Creating src/index.ts..."
+mkdir -p src
+cat <<EOF >src/index.ts
+console.log('TypeScript project ready 🚀')
+EOF
+
+echo
+echo "✅ Setup complete"
+echo
+echo "Next steps:"
+echo "  cd $PROJECT_NAME"
+echo "  npm run dev"cho "  cd $PROJECT_NAME"
